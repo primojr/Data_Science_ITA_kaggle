@@ -17,7 +17,7 @@ library(tidymodels)
 
 ### Lendo os dados e carregando os pacotes
 ```{r echo=FALSE}
-df <- read_csv("dados/warmupv4publictest.csv")
+df <- read_csv("dados/warmupv4publictrain.csv")
 dplyr::glimpse(df)
 
 ```

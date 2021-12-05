@@ -7,13 +7,14 @@
 library(tidyverse)
 library(tidymodels)
 
-df <- read_csv("dados/warmupv4publictest.csv")
+df <- read_csv("dados/warmupv4publictrain.csv")
 
 # Conhecendo os dados
 glimpse(df)
 skimr::skim(df)
 
-df %>% DataExplorer::plot_histogram(nrow = 4, ncol = 4)
+df %>% DataExplorer::plot_histogram(nrow = 6, ncol = 4)
+
 df |> DataExplorer::plot_bar()
 
 
