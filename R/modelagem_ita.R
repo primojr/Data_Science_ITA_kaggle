@@ -6,5 +6,5 @@ library(tidymodels)
 #Step 1 - Split
 
 
-#Step 2 - Transaformação
+#Step 2 - Pré processamento
 

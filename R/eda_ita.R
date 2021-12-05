@@ -14,15 +14,21 @@ glimpse(df)
 skimr::skim(df)
 
 df %>% DataExplorer::plot_histogram(nrow = 6, ncol = 4)
+df %>%  DataExplorer::plot_bar()
 
-df |> DataExplorer::plot_bar()
-
-
-df |> DataExplorer::plot_bar(by = "altitute")
-
-df %>% select_if(., is.numeric) %>% 
+# Correlação
+df %>% 
+  select_if(., is.numeric) %>% 
+  cor(rnorm(12),rnorm(12))
+  
   DataExplorer::plot_correlation()
 
 # Obs: tratar os NA's
 
+recipes::sep
+
 is.na(df) %>% colSums()
+
+  
+
+

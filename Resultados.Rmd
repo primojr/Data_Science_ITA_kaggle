@@ -27,3 +27,16 @@ dplyr::glimpse(df)
 skimr::skim(df)
 ```
 
+## Analise univariavel
+
+### Numericas
+```{r}
+df %>% DataExplorer::plot_histogram(nrow = 6, ncol = 4)
+```
+
+
+### Categoricas
+```{r}
+df %>%  DataExplorer::plot_bar()
+```
+
