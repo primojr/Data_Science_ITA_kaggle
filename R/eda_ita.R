@@ -19,16 +19,8 @@ df %>%  DataExplorer::plot_bar()
 # Correlação
 df %>% 
   select_if(., is.numeric) %>% 
-  cor(rnorm(12),rnorm(12))
-  
-  DataExplorer::plot_correlation()
+  na.omit() %>% 
+  DataExplorer::plot_correlation(title = "Correlação")
 
-# Obs: tratar os NA's
-
-recipes::sep
-
-is.na(df) %>% colSums()
-
-  
 
 
