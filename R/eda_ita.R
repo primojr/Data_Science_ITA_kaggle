@@ -1,9 +1,7 @@
 
 ## EDA
 
-#
-
-
+# O objetivo é prever a variância nos preços entre diferentes permissões dependendo do cenário simulado.
 
 # Carregar pacotes
 library(tidyverse)
