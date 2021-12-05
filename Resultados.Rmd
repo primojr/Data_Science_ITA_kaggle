@@ -1,0 +1,35 @@
+---
+title: "Modelo de predição - Preços dos drones"
+author: "Gerson"
+date: "05/12/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Objetivo:
+>  O objetivo é prever a variância nos preços entre diferentes permissões dependendo do cenário simulado.
+
+
+### Lendo os dados e carregando os pacotes
+```{r}
+library(tidyverse)
+library(tidymodels)
+df <- read_csv("dados/warmupv4publictest.csv")
+dplyr::glimpse(df)
+
+```
+
+
+```{r}
+skimr::skim(df)
+```
+
+## Including Plots
+
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
