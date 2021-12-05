@@ -7,6 +7,8 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(tidymodels)
 ```
 
 ## Objetivo:
@@ -14,9 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ### Lendo os dados e carregando os pacotes
-```{r}
-library(tidyverse)
-library(tidymodels)
+```{r echo=FALSE}
 df <- read_csv("dados/warmupv4publictest.csv")
 dplyr::glimpse(df)
 
@@ -27,9 +27,3 @@ dplyr::glimpse(df)
 skimr::skim(df)
 ```
 
-## Including Plots
-
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
