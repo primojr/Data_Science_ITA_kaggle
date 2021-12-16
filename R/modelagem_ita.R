@@ -5,22 +5,19 @@ library(tidymodels)
 library(tidyverse)
 library(ranger)
 
-# 00. EDA Arvore
-df_tree %>% DataExplorer::plot_bar(.,by = 'classe'
-                                   ,title = 'classe ~ . '
-                                   ,ncol = 4)
 
+# Ler Base
 
 # 01.Splits
-splits <- initial_split(df_tree, strata = classe)
-br_trainning <- training(splits)
-br_testing <- testing(splits)
+df_train <- read_csv("dados/warmupv4publictrain.csv")
+glimpse(df_train)
+
+
+# 00. EDA Arvore
+df_train %>% DataExplorer::plot_histogram(nrow = 6,ncol = 4)
 
 
 # 02.Pré processamento 
-
-
-# 03.recipe
 reg_recipe <- recipe(
   classe ~ . ,
   data = br_trainning
