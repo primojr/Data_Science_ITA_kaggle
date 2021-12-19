@@ -12,23 +12,43 @@ library(ranger)
 df_train <- read_csv("dados/warmupv4publictrain.csv")
 glimpse(df_train)
 
+df_train %>% skimr::skim()
 
-# 00. EDA Arvore
+# 00. EDA Base
+df_train$sd_trans %>% boxplot()
+
+df_train %>% DataExplorer::plot_intro()
 df_train %>% DataExplorer::plot_histogram(nrow = 6,ncol = 4)
+df_train %>% DataExplorer::plot_bar()
+df_train %>% DataExplorer::plot_missing()
+
+## 01. Relação Agentes x Variação
+boxplot(df_train$sd_trans ~ df_train$agents
+        ,ylab = 'Variação das transações'
+        ,xlab = 'Agentes'
+        ,col = '#40E0D0')
 
 
-# 02.Pré processamento 
-reg_recipe <- recipe(
-  classe ~ . ,
-  data = br_trainning
-) %>% 
-  step_impute_knn(all_predictors()) %>% 
+
+
+
+
+# 01 Pré Processamento
+df_train <- df_train %>% 
+  mutate(altitute = factor(altitute)
+         ,agents  = factor(agents))
+
+reg_recipe <- recipe(sd_trans ~., data = df_train) %>% 
+  step_impute_knn(all_numeric()) %>% 
+  step_normalize(all_numeric_predictors()) %>% 
   step_dummy(all_nominal_predictors())
+  #step_corr(all_numeric_predictors(), threshold = .8, method = "pearson")
+
 
 # 04. Engine
-reg_mod <- rand_forest(trees = tune()) %>% 
-  set_engine("ranger")  %>% 
-  set_mode("classification")
+reg_mod <- linear_reg(penalty = tune(), mixture = tune()) %>% 
+  set_engine("glmnet") %>% 
+  set_mode("regression")
 
 # 05. Workflow
 reg_workflow <- workflow() %>% 
@@ -36,15 +56,15 @@ reg_workflow <- workflow() %>%
   add_recipe(reg_recipe)
 
 # 06.Cross validation
-val_set <- vfold_cv(br_trainning, v = 4, strata = classe)
+val_set <- vfold_cv(df_train, v = 4, strata = altitute)
 
 # 07.trainning
 reg_trained <- reg_workflow %>% 
   tune_grid(
     val_set,
-    grid = 5,
+    grid = 10,
     control = control_grid(save_pred = TRUE),
-    metrics = metric_set(accuracy)
+    metrics = metric_set(rmse)
   )
 
 reg_trained %>% show_best()
@@ -52,23 +72,25 @@ reg_trained %>% show_best()
 # autoplot
 ggplot2::autoplot(reg_trained)
 
-# see the magic
+ # selecaop
 reg_best_tune <- select_best(reg_trained, "rmse")
-final_reg_model <- reg_mod %>% 
-  finalize_model(reg_best_tune)
+final_reg_model <- reg_mod %>%
+finalize_model(reg_best_tune)
 
-workflow() %>% 
-  add_recipe(reg_recipe) %>% 
-  add_model(final_reg_model) %>% 
-  last_fit(splits) %>% 
-  collect_predictions() %>% 
-  select(.row, price, .pred) %>% 
+
+final_reg_model$eng_args
+
+workflow() %>%
+  add_recipe(reg_recipe) %>%
+  add_model(final_reg_model) %>%
+  collect_predictions() %>%
+  select(.row, price, .pred) %>%
   ggplot() +
   aes(x= price, y = .pred) +
   geom_point()
 
-# save the results
-reg_fitted <- workflow() %>% 
-  add_recipe(reg_recipe) %>% 
-  add_model(final_reg_model) %>% 
-  fit(computers)   
+# # save the results
+# reg_fitted <- workflow() %>% 
+#   add_recipe(reg_recipe) %>% 
+#   add_model(final_reg_model) %>% 
+#   fit(NOME)   

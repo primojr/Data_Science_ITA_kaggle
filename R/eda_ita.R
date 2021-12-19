@@ -23,4 +23,4 @@ df %>%
   DataExplorer::plot_correlation(title = "Correlação")
 
 
-
+# Fazer tratamento dos dados 
