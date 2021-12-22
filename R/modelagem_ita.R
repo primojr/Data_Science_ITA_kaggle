@@ -29,21 +29,16 @@ boxplot(df_train$sd_trans ~ df_train$agents
         ,col = '#40E0D0')
 
 
-
-
-
-
 # 01 Pré Processamento
-df_train <- df_train %>% 
-  mutate(altitute = factor(altitute)
-         ,agents  = factor(agents))
-
-reg_recipe <- recipe(sd_trans ~., data = df_train) %>% 
-  step_impute_knn(all_numeric()) %>% 
-  step_normalize(all_numeric_predictors()) %>% 
-  step_dummy(all_nominal_predictors())
-  #step_corr(all_numeric_predictors(), threshold = .8, method = "pearson")
-
+reg_recipe <- recipe(sd_trans ~ ., data = df_train) %>%
+  step_select(-b1,-b2,-b3,-a4,-l1,-l2) %>% 
+  step_mutate(altitute = as.factor(altitute),
+              agents   = if_else(agents == '50+', 'Ate 50', 'Mais 50') %>% as.factor()) %>%
+  step_impute_knn(all_numeric()) %>%
+  step_normalize(all_numeric_predictors()) %>%
+  step_dummy(altitute,agents)
+#step_corr(all_numeric_predictors(), threshold = .8, method = "pearson")
+#juice(prep(reg_recipe)) 
 
 # 04. Engine
 reg_mod <- linear_reg(penalty = tune(), mixture = tune()) %>% 
@@ -56,13 +51,13 @@ reg_workflow <- workflow() %>%
   add_recipe(reg_recipe)
 
 # 06.Cross validation
-val_set <- vfold_cv(df_train, v = 4, strata = altitute)
+val_set <- vfold_cv(df_train, v = 4, strata = sd_trans)
 
 # 07.trainning
 reg_trained <- reg_workflow %>% 
   tune_grid(
     val_set,
-    grid = 10,
+    grid = 5,
     control = control_grid(save_pred = TRUE),
     metrics = metric_set(rmse)
   )
